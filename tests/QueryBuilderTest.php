@@ -28,7 +28,7 @@ class QueryBuilderTest extends TestCase
 
         $product = DB::collection('items')->first();
 
-        $pid = (string) ($product['_id']);
+        $pid = (string) ($product['c_id']);
 
         DB::collection('items')->where('user_id', $user_id)->delete($pid);
 
@@ -36,7 +36,7 @@ class QueryBuilderTest extends TestCase
 
         $product = DB::collection('items')->first();
 
-        $pid = $product['_id'];
+        $pid = $product['c_id'];
 
         DB::collection('items')->where('user_id', $user_id)->delete($pid);
 
@@ -69,7 +69,7 @@ class QueryBuilderTest extends TestCase
         $item = DB::collection('items')->where('name', 'nothing')->first();
         $this->assertNull($item);
 
-        $item = DB::collection('items')->where('_id', '51c33d8981fec6813e00000a')->first();
+        $item = DB::collection('items')->where('c_id', '51c33d8981fec6813e00000a')->first();
         $this->assertNull($item);
     }
 
@@ -242,42 +242,42 @@ class QueryBuilderTest extends TestCase
             'messages' => [],
         ]);
 
-        DB::collection('users')->where('_id', $id)->push('tags', 'tag1');
+        DB::collection('users')->where('c_id', $id)->push('tags', 'tag1');
 
         $user = DB::collection('users')->find($id);
         $this->assertInternalType('array', $user['tags']);
         $this->assertCount(1, $user['tags']);
         $this->assertEquals('tag1', $user['tags'][0]);
 
-        DB::collection('users')->where('_id', $id)->push('tags', 'tag2');
+        DB::collection('users')->where('c_id', $id)->push('tags', 'tag2');
         $user = DB::collection('users')->find($id);
         $this->assertCount(2, $user['tags']);
         $this->assertEquals('tag2', $user['tags'][1]);
 
         // Add duplicate
-        DB::collection('users')->where('_id', $id)->push('tags', 'tag2');
+        DB::collection('users')->where('c_id', $id)->push('tags', 'tag2');
         $user = DB::collection('users')->find($id);
         $this->assertCount(3, $user['tags']);
 
         // Add unique
-        DB::collection('users')->where('_id', $id)->push('tags', 'tag1', true);
+        DB::collection('users')->where('c_id', $id)->push('tags', 'tag1', true);
         $user = DB::collection('users')->find($id);
         $this->assertCount(3, $user['tags']);
 
         $message = ['from' => 'Jane', 'body' => 'Hi John'];
-        DB::collection('users')->where('_id', $id)->push('messages', $message);
+        DB::collection('users')->where('c_id', $id)->push('messages', $message);
         $user = DB::collection('users')->find($id);
         $this->assertInternalType('array', $user['messages']);
         $this->assertCount(1, $user['messages']);
         $this->assertEquals($message, $user['messages'][0]);
 
         // Raw
-        DB::collection('users')->where('_id', $id)->push(['tags' => 'tag3', 'messages' => ['from' => 'Mark', 'body' => 'Hi John']]);
+        DB::collection('users')->where('c_id', $id)->push(['tags' => 'tag3', 'messages' => ['from' => 'Mark', 'body' => 'Hi John']]);
         $user = DB::collection('users')->find($id);
         $this->assertCount(4, $user['tags']);
         $this->assertCount(2, $user['messages']);
 
-        DB::collection('users')->where('_id', $id)->push(['messages' => ['date' => new DateTime(), 'body' => 'Hi John']]);
+        DB::collection('users')->where('c_id', $id)->push(['messages' => ['date' => new DateTime(), 'body' => 'Hi John']]);
         $user = DB::collection('users')->find($id);
         $this->assertCount(3, $user['messages']);
     }
@@ -293,21 +293,21 @@ class QueryBuilderTest extends TestCase
             'messages' => [$message1, $message2],
         ]);
 
-        DB::collection('users')->where('_id', $id)->pull('tags', 'tag3');
+        DB::collection('users')->where('c_id', $id)->pull('tags', 'tag3');
 
         $user = DB::collection('users')->find($id);
         $this->assertInternalType('array', $user['tags']);
         $this->assertCount(3, $user['tags']);
         $this->assertEquals('tag4', $user['tags'][2]);
 
-        DB::collection('users')->where('_id', $id)->pull('messages', $message1);
+        DB::collection('users')->where('c_id', $id)->pull('messages', $message1);
 
         $user = DB::collection('users')->find($id);
         $this->assertInternalType('array', $user['messages']);
         $this->assertCount(1, $user['messages']);
 
         // Raw
-        DB::collection('users')->where('_id', $id)->pull(['tags' => 'tag2', 'messages' => $message2]);
+        DB::collection('users')->where('c_id', $id)->pull(['tags' => 'tag2', 'messages' => $message2]);
         $user = DB::collection('users')->find($id);
         $this->assertCount(2, $user['tags']);
         $this->assertCount(0, $user['messages']);
@@ -336,24 +336,24 @@ class QueryBuilderTest extends TestCase
     public function testCustomId()
     {
         DB::collection('items')->insert([
-            ['_id' => 'knife', 'type' => 'sharp', 'amount' => 34],
-            ['_id' => 'fork',  'type' => 'sharp', 'amount' => 20],
-            ['_id' => 'spoon', 'type' => 'round', 'amount' => 3],
+            ['c_id' => 'knife', 'type' => 'sharp', 'amount' => 34],
+            ['c_id' => 'fork',  'type' => 'sharp', 'amount' => 20],
+            ['c_id' => 'spoon', 'type' => 'round', 'amount' => 3],
         ]);
 
         $item = DB::collection('items')->find('knife');
-        $this->assertEquals('knife', $item['_id']);
+        $this->assertEquals('knife', $item['c_id']);
 
-        $item = DB::collection('items')->where('_id', 'fork')->first();
-        $this->assertEquals('fork', $item['_id']);
+        $item = DB::collection('items')->where('c_id', 'fork')->first();
+        $this->assertEquals('fork', $item['c_id']);
 
         DB::collection('users')->insert([
-            ['_id' => 1, 'name' => 'Jane Doe'],
-            ['_id' => 2, 'name' => 'John Doe'],
+            ['c_id' => 1, 'name' => 'Jane Doe'],
+            ['c_id' => 2, 'name' => 'John Doe'],
         ]);
 
         $item = DB::collection('users')->find(1);
-        $this->assertEquals(1, $item['_id']);
+        $this->assertEquals(1, $item['c_id']);
     }
 
     public function testTake()
@@ -413,7 +413,7 @@ class QueryBuilderTest extends TestCase
         $this->assertCount(3, $list);
         $this->assertEquals(['knife' => 'sharp', 'fork' => 'sharp', 'spoon' => 'round'], $list);
 
-        $list = DB::collection('items')->pluck('name', '_id')->toArray();
+        $list = DB::collection('items')->pluck('name', 'c_id')->toArray();
         $this->assertCount(4, $list);
         $this->assertEquals(24, strlen(key($list)));
     }
@@ -514,7 +514,7 @@ class QueryBuilderTest extends TestCase
     {
         $id = DB::collection('users')->insertGetId(['name' => 'John Doe', 'address' => ['country' => 'Belgium']]);
 
-        DB::collection('users')->where('_id', $id)->update(['address.country' => 'England']);
+        DB::collection('users')->where('c_id', $id)->update(['address.country' => 'England']);
 
         $check = DB::collection('users')->find($id);
         $this->assertEquals('England', $check['address']['country']);

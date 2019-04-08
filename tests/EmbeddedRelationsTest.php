@@ -39,7 +39,7 @@ class EmbeddedRelationsTest extends TestCase
         $this->assertInternalType('string', $address->_id);
 
         $raw = $address->getAttributes();
-        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['_id']);
+        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['c_id']);
 
         $address = $user->addresses()->save(new Address(['city' => 'Paris']));
 
@@ -166,7 +166,7 @@ class EmbeddedRelationsTest extends TestCase
         $this->assertEquals(1, $user->addresses->count());
         $this->assertEquals(['Paris'], $user->addresses->pluck('city')->all());
 
-        $user->addresses()->create(['_id' => $address->_id, 'city' => 'Bruxelles']);
+        $user->addresses()->create(['c_id' => $address->_id, 'city' => 'Bruxelles']);
         $this->assertEquals(1, $user->addresses->count());
         $this->assertEquals(['Bruxelles'], $user->addresses->pluck('city')->all());
     }
@@ -180,17 +180,17 @@ class EmbeddedRelationsTest extends TestCase
         $this->assertEquals(['Bruxelles'], $user->addresses->pluck('city')->all());
 
         $raw = $address->getAttributes();
-        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['_id']);
+        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['c_id']);
 
         $freshUser = User::find($user->id);
         $this->assertEquals(['Bruxelles'], $freshUser->addresses->pluck('city')->all());
 
         $user = User::create([]);
-        $address = $user->addresses()->create(['_id' => '', 'city' => 'Bruxelles']);
+        $address = $user->addresses()->create(['c_id' => '', 'city' => 'Bruxelles']);
         $this->assertInternalType('string', $address->_id);
 
         $raw = $address->getAttributes();
-        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['_id']);
+        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['c_id']);
     }
 
     public function testEmbedsManyCreateMany()
@@ -232,7 +232,7 @@ class EmbeddedRelationsTest extends TestCase
         $freshUser = User::find($user->id);
         $this->assertEquals(['Bruxelles', 'Paris', 'San Francisco'], $freshUser->addresses->pluck('city')->all());
 
-        $ids = $user->addresses->pluck('_id');
+        $ids = $user->addresses->pluck('c_id');
         $user->addresses()->destroy($ids);
         $this->assertEquals([], $user->addresses->pluck('city')->all());
 
@@ -469,7 +469,7 @@ class EmbeddedRelationsTest extends TestCase
         $this->assertInternalType('string', $father->_id);
 
         $raw = $father->getAttributes();
-        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['_id']);
+        $this->assertInstanceOf('MongoDB\BSON\ObjectID', $raw['c_id']);
 
         $father->setEventDispatcher($events = Mockery::mock('Illuminate\Events\Dispatcher'));
         $events->shouldReceive('dispatch')->with('eloquent.retrieved: ' . get_class($father), Mockery::any());

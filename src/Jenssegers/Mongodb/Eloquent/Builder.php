@@ -146,7 +146,7 @@ class Builder extends EloquentBuilder
     /**
      * @inheritdoc
      */
-    public function chunkById($count, callable $callback, $column = '_id', $alias = null)
+    public function chunkById($count, callable $callback, $column = 'c_id', $alias = null)
     {
         return parent::chunkById($count, $callback, $column, $alias);
     }
@@ -170,7 +170,7 @@ class Builder extends EloquentBuilder
 
             return $this->model->newFromBuilder((array) $results);
         } // The result is a single object.
-        elseif (is_array($results) && array_key_exists('_id', $results)) {
+        elseif (is_array($results) && array_key_exists('c_id', $results)) {
             return $this->model->newFromBuilder((array) $results);
         }
 

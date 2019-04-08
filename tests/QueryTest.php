@@ -202,7 +202,7 @@ class QueryTest extends TestCase
         $this->assertEquals(6, $count);
 
         // Test for issue #165
-        $count = User::select('_id', 'age', 'title')->where('age', '<>', 35)->count();
+        $count = User::select('c_id', 'age', 'title')->where('age', '<>', 35)->count();
         $this->assertEquals(6, $count);
     }
 

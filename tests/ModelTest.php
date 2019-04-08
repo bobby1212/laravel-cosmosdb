@@ -23,7 +23,7 @@ class ModelTest extends TestCase
         $this->assertInstanceOf('Jenssegers\Mongodb\Connection', $user->getConnection());
         $this->assertFalse($user->exists);
         $this->assertEquals('users', $user->getTable());
-        $this->assertEquals('_id', $user->getKeyName());
+        $this->assertEquals('c_id', $user->getKeyName());
     }
 
     public function testInsert()
@@ -45,7 +45,7 @@ class ModelTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $user->created_at);
 
         $raw = $user->getAttributes();
-        $this->assertInstanceOf(ObjectID::class, $raw['_id']);
+        $this->assertInstanceOf(ObjectID::class, $raw['c_id']);
 
         $this->assertEquals('John Doe', $user->name);
         $this->assertEquals(35, $user->age);
@@ -60,7 +60,7 @@ class ModelTest extends TestCase
         $user->save();
 
         $raw = $user->getAttributes();
-        $this->assertInstanceOf(ObjectID::class, $raw['_id']);
+        $this->assertInstanceOf(ObjectID::class, $raw['c_id']);
 
         $check = User::find($user->_id);
 
@@ -78,7 +78,7 @@ class ModelTest extends TestCase
         $user->update(['age' => 20]);
 
         $raw = $user->getAttributes();
-        $this->assertInstanceOf(ObjectID::class, $raw['_id']);
+        $this->assertInstanceOf(ObjectID::class, $raw['c_id']);
 
         $check = User::find($user->_id);
         $this->assertEquals(20, $check->age);
@@ -97,7 +97,7 @@ class ModelTest extends TestCase
         $this->assertEquals('4af9f23d8ead0e1d32000000', $user->_id);
 
         $raw = $user->getAttributes();
-        $this->assertInstanceOf(ObjectID::class, $raw['_id']);
+        $this->assertInstanceOf(ObjectID::class, $raw['c_id']);
 
         $user = new User;
         $user->_id = 'customId';
@@ -110,7 +110,7 @@ class ModelTest extends TestCase
         $this->assertEquals('customId', $user->_id);
 
         $raw = $user->getAttributes();
-        $this->assertInternalType('string', $raw['_id']);
+        $this->assertInternalType('string', $raw['c_id']);
     }
 
     public function testManualIntId()
@@ -126,7 +126,7 @@ class ModelTest extends TestCase
         $this->assertEquals(1, $user->_id);
 
         $raw = $user->getAttributes();
-        $this->assertInternalType('integer', $raw['_id']);
+        $this->assertInternalType('integer', $raw['c_id']);
     }
 
     public function testDelete()
@@ -303,7 +303,7 @@ class ModelTest extends TestCase
     public function testPrimaryKey()
     {
         $user = new User;
-        $this->assertEquals('_id', $user->getKeyName());
+        $this->assertEquals('c_id', $user->getKeyName());
 
         $book = new Book;
         $this->assertEquals('title', $book->getKeyName());
@@ -338,10 +338,10 @@ class ModelTest extends TestCase
         $array = $item->toArray();
         $keys = array_keys($array);
         sort($keys);
-        $this->assertEquals(['_id', 'created_at', 'name', 'type', 'updated_at'], $keys);
+        $this->assertEquals(['c_id', 'created_at', 'name', 'type', 'updated_at'], $keys);
         $this->assertInternalType('string', $array['created_at']);
         $this->assertInternalType('string', $array['updated_at']);
-        $this->assertInternalType('string', $array['_id']);
+        $this->assertInternalType('string', $array['c_id']);
     }
 
     public function testUnset()
@@ -440,20 +440,20 @@ class ModelTest extends TestCase
         $user->push('tags', 'tag2', true);
 
         $this->assertEquals(['tag1', 'tag1', 'tag2'], $user->tags);
-        $user = User::where('_id', $user->_id)->first();
+        $user = User::where('c_id', $user->_id)->first();
         $this->assertEquals(['tag1', 'tag1', 'tag2'], $user->tags);
 
         $user->pull('tags', 'tag1');
 
         $this->assertEquals(['tag2'], $user->tags);
-        $user = User::where('_id', $user->_id)->first();
+        $user = User::where('c_id', $user->_id)->first();
         $this->assertEquals(['tag2'], $user->tags);
 
         $user->push('tags', 'tag3');
         $user->pull('tags', ['tag2', 'tag3']);
 
         $this->assertEquals([], $user->tags);
-        $user = User::where('_id', $user->_id)->first();
+        $user = User::where('c_id', $user->_id)->first();
         $this->assertEquals([], $user->tags);
     }
 

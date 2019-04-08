@@ -148,7 +148,7 @@ trait HybridRelations
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (is_null($foreignKey)) {
-            $foreignKey = Str::snake($relation) . '_id';
+            $foreignKey = Str::snake($relation) . 'c_id';
         }
 
         $instance = new $related;

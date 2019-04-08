@@ -200,7 +200,7 @@ class Builder extends BaseBuilder
      */
     public function find($id, $columns = [])
     {
-        return $this->where('_id', '=', $this->convertKey($id))->first($columns);
+        return $this->where('c_id', '=', $this->convertKey($id))->first($columns);
     }
 
     /**
@@ -242,7 +242,7 @@ class Builder extends BaseBuilder
             // Add grouping columns to the $group part of the aggregation pipeline.
             if ($this->groups) {
                 foreach ($this->groups as $column) {
-                    $group['_id'][$column] = '$' . $column;
+                    $group['c_id'][$column] = '$' . $column;
 
                     // When grouping, also add the $last operator to each grouped field,
                     // this mimics MySQL's behaviour a bit.
@@ -289,8 +289,8 @@ class Builder extends BaseBuilder
             }
 
             // The _id field is mandatory when using grouping.
-            if ($group && empty($group['_id'])) {
-                $group['_id'] = null;
+            if ($group && empty($group['c_id'])) {
+                $group['c_id'] = null;
             }
 
             // Build the aggregation pipeline.
@@ -339,7 +339,7 @@ class Builder extends BaseBuilder
         } // Distinct query
         elseif ($this->distinct) {
             // Return distinct results directly
-            $column = isset($this->columns[0]) ? $this->columns[0] : '_id';
+            $column = isset($this->columns[0]) ? $this->columns[0] : 'c_id';
 
             // Execute distinct
             if ($wheres) {
@@ -566,15 +566,20 @@ class Builder extends BaseBuilder
      */
     public function insertGetId(array $values, $sequence = null)
     {
+        if (is_null($sequence)) {
+            $sequence = 'c_id';
+        }
+
+        // Manually create the primary id, because othe
+        if(!array_key_exists($sequence, $values)) {
+            $values[$sequence] = (string) new ObjectID;
+        }
+
         $result = $this->collection->insertOne($values);
 
         if (1 == (int) $result->isAcknowledged()) {
-            if (is_null($sequence)) {
-                $sequence = '_id';
-            }
-
             // Return id
-            return $sequence == '_id' ? $result->getInsertedId() : $values[$sequence];
+            return $sequence == 'c_id' ? $result->getInsertedId() : $values[$sequence];
         }
     }
 
@@ -623,7 +628,7 @@ class Builder extends BaseBuilder
     /**
      * @inheritdoc
      */
-    public function chunkById($count, callable $callback, $column = '_id', $alias = null)
+    public function chunkById($count, callable $callback, $column = 'c_id', $alias = null)
     {
         return parent::chunkById($count, $callback, $column, $alias);
     }
@@ -631,7 +636,7 @@ class Builder extends BaseBuilder
     /**
      * @inheritdoc
      */
-    public function forPageAfterId($perPage = 15, $lastId = 0, $column = '_id')
+    public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'c_id')
     {
         return parent::forPageAfterId($perPage, $lastId, $column);
     }
@@ -644,9 +649,9 @@ class Builder extends BaseBuilder
         $results = $this->get(is_null($key) ? [$column] : [$column, $key]);
 
         // Convert ObjectID's to strings
-        if ($key == '_id') {
+        if ($key == 'c_id') {
             $results = $results->map(function ($item) {
-                $item['_id'] = (string) $item['_id'];
+                $item['c_id'] = (string) $item['c_id'];
                 return $item;
             });
         }
@@ -664,7 +669,7 @@ class Builder extends BaseBuilder
         // the ID to allow developers to simply and quickly remove a single row
         // from their database without manually specifying the where clauses.
         if (!is_null($id)) {
-            $this->where('_id', '=', $id);
+            $this->where('c_id', '=', $id);
         }
 
         $wheres = $this->compileWheres();
@@ -903,7 +908,7 @@ class Builder extends BaseBuilder
             }
 
             // Convert id's.
-            if (isset($where['column']) && ($where['column'] == '_id' || Str::endsWith($where['column'], '._id'))) {
+            if (isset($where['column']) && ($where['column'] == 'c_id' || Str::endsWith($where['column'], '._id'))) {
                 // Multiple values.
                 if (isset($where['values'])) {
                     foreach ($where['values'] as &$value) {

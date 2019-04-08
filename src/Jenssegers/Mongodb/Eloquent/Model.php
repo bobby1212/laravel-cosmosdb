@@ -30,7 +30,7 @@ abstract class Model extends BaseModel
      *
      * @var string
      */
-    protected $primaryKey = '_id';
+    protected $primaryKey = 'c_id';
     
     /**
      * The primary key type.
@@ -54,10 +54,10 @@ abstract class Model extends BaseModel
      */
     public function getIdAttribute($value = null)
     {
-        // If we don't have a value for 'id', we will use the Mongo '_id' value.
+        // If we don't have a value for 'id', we will use the Mongo 'c_id' value.
         // This allows us to work with models in a more sql-like way.
-        if (!$value && array_key_exists('_id', $this->attributes)) {
-            $value = $this->attributes['_id'];
+        if (!$value && array_key_exists('c_id', $this->attributes)) {
+            $value = $this->attributes['c_id'];
         }
 
         // Convert ObjectID to string.
@@ -172,7 +172,7 @@ abstract class Model extends BaseModel
     public function setAttribute($key, $value)
     {
         // Convert _id to ObjectID.
-        if ($key == '_id' && is_string($value)) {
+        if ($key == 'c_id' && is_string($value)) {
             $builder = $this->newBaseQueryBuilder();
 
             $value = $builder->convertKey($value);

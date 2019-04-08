@@ -30,10 +30,10 @@ class MongoFailedJobProvider extends DatabaseFailedJobProvider
      */
     public function all()
     {
-        $all = $this->getTable()->orderBy('_id', 'desc')->get()->all();
+        $all = $this->getTable()->orderBy('c_id', 'desc')->get()->all();
 
         $all = array_map(function ($job) {
-            $job['id'] = (string) $job['_id'];
+            $job['id'] = (string) $job['c_id'];
             return (object) $job;
         }, $all);
 
@@ -50,7 +50,7 @@ class MongoFailedJobProvider extends DatabaseFailedJobProvider
     {
         $job = $this->getTable()->find($id);
 
-        $job['id'] = (string) $job['_id'];
+        $job['id'] = (string) $job['c_id'];
 
         return (object) $job;
     }
@@ -63,6 +63,6 @@ class MongoFailedJobProvider extends DatabaseFailedJobProvider
      */
     public function forget($id)
     {
-        return $this->getTable()->where('_id', $id)->delete() > 0;
+        return $this->getTable()->where('c_id', $id)->delete() > 0;
     }
 }

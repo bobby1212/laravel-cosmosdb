@@ -42,7 +42,7 @@ class QueueTest extends TestCase
         $expiry = \Carbon\Carbon::now()->subSeconds(Config::get('queue.connections.database.expire'))->getTimestamp();
         Queue::getDatabase()
             ->table(Config::get('queue.connections.database.table'))
-            ->where('_id', $id)
+            ->where('c_id', $id)
             ->update(['reserved' => 1, 'reserved_at' => $expiry]);
 
         // Expect an attempted older job in the queue

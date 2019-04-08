@@ -40,8 +40,8 @@ class EmbedsMany extends EmbedsOneOrMany
     public function performInsert(Model $model)
     {
         // Generate a new key if needed.
-        if ($model->getKeyName() == '_id' && !$model->getKey()) {
-            $model->setAttribute('_id', new ObjectID);
+        if ($model->getKeyName() == 'c_id' && !$model->getKey()) {
+            $model->setAttribute('c_id', new ObjectID);
         }
 
         // For deeply nested documents, let the parent handle the changes.
@@ -237,8 +237,8 @@ class EmbedsMany extends EmbedsOneOrMany
     protected function associateNew($model)
     {
         // Create a new key if needed.
-        if (!$model->getAttribute('_id')) {
-            $model->setAttribute('_id', new ObjectID);
+        if (!$model->getAttribute('c_id')) {
+            $model->setAttribute('c_id', new ObjectID);
         }
 
         $records = $this->getEmbedded();
