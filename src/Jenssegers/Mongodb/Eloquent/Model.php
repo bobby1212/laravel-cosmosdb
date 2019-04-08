@@ -54,10 +54,10 @@ abstract class Model extends BaseModel
      */
     public function getIdAttribute($value = null)
     {
-        // If we don't have a value for 'id', we will use the Mongo 'c_id' value.
+        // If we don't have a value for 'id', we will use the primary key value.
         // This allows us to work with models in a more sql-like way.
-        if (!$value && array_key_exists('c_id', $this->attributes)) {
-            $value = $this->attributes['c_id'];
+        if (!$value && array_key_exists($this->primaryKey, $this->attributes)) {
+            $value = $this->attributes[$this->primaryKey];
         }
 
         // Convert ObjectID to string.
